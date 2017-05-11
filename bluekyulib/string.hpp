@@ -23,34 +23,27 @@
  */
 
 /**
- * @file        main.cpp
- * @author      Younguk Kim
- * @date        2017
+* @file        string.hpp
+* @author      Younguk Kim
+* @date        2017
+*/
+
+#pragma once
+
+#include <string>
+#include <vector>
+#include <regex>
+
+namespace bluekyulib {
+
+/**
+ * Split string @p src with given @p regex.
+ *
+ * @note: https://gist.github.com/filsinger/3910580
  */
-
-#include <iostream>
-
-#include <bluekyulib/system/path.hpp>
-#include <bluekyulib/string.hpp>
-
-#if BOOST_VERSION >= 106100
-#include <boost/dll/runtime_symbol_info.hpp>
-#endif
-
-int main(int argc, char* argv[])
+inline std::vector<std::string> split(const std::string& src, const std::regex& regex)
 {
-    std::cout << "Program location: " << bluekyulib::system::get_application_path() << std::endl;
+    return { std::sregex_token_iterator(src.begin(), src.end(), regex, -1), std::sregex_token_iterator() };
+}
 
-#if BOOST_VERSION >= 106100
-    std::cout << "Program location (boost-dll): " << boost::dll::program_location() << std::endl;
-#endif
-
-    std::cout << std::endl << std::endl;
-
-    std::string str = "Hello, World!";
-    std::cout << "String: " << str << std::endl;
-    for (const auto& word: bluekyulib::split(str, std::regex(" ")))
-        std::cout << "'" << word << "'" << std::endl;
-
-    return 0;
 }

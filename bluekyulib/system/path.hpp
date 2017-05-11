@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2016, Center of human-centered interaction for coexistence.
+ * Copyright (c) 2017, Younguk Kim.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 /**
  * @file        path.hpp
  * @author      Younguk Kim
- * @date        2016
+ * @date        2017
  */
 
 #pragma once
