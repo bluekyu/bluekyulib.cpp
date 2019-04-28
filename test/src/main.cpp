@@ -37,6 +37,16 @@
 #include <boost/dll/runtime_symbol_info.hpp>
 #endif
 
+template <class T>
+void test_parse_numeric(const std::string& src)
+{
+    auto result = bluekyulib::parse_numeric<T>(src);
+    if (result)
+        std::cout << "Parse: " << *result << std::endl;
+    else
+        std::cout << "Failed to parse: " << src << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     std::cout << "Program location: " << bluekyulib::system::get_application_path() << std::endl;
@@ -51,6 +61,14 @@ int main(int argc, char* argv[])
     std::cout << "String: " << str << std::endl;
     for (const auto& word: bluekyulib::split(str, std::regex(" ")))
         std::cout << "'" << word << "'" << std::endl;
+
+    // Test parse_numeric
+    test_parse_numeric<int>("-123");
+    test_parse_numeric<int>("-12.3");
+    test_parse_numeric<unsigned int>("123");
+    test_parse_numeric<unsigned int>("-123");
+    test_parse_numeric<float>("-12.3");
+    test_parse_numeric<float>(".123");
 
     return 0;
 }
