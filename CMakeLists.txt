@@ -1,28 +1,19 @@
 # Author: Younguk Kim (bluekyu)
-# Date  : 2017-05-09
 
-cmake_minimum_required(VERSION 3.6)
-project(bluekyulib)
+cmake_minimum_required(VERSION 3.12)
+project(bluekyulib
+    VERSION 0.1.0
+    HOMEPAGE_URL "https://github.com/bluekyu/bluekyulib.cpp"
+    LANGUAGES CXX
+)
 
 # === configure ====================================================================================
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
 
-# version
-set(PROJECT_VERSION_MAJOR "0")
-set(PROJECT_VERSION_MINOR "1")
-set(PROJECT_VERSION_PATCH "0")
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+include(GNUInstallDirs)
 
 # === project specific packages ===
-# find boost
-option(Boost_USE_STATIC_LIBS    "Boost uses static libraries" OFF)
-option(Boost_USE_MULTITHREADED  "Boost uses multithreaded"  ON)
-option(Boost_USE_STATIC_RUNTIME "Boost uses static runtime" OFF)
-
-set(BOOST_ROOT "" CACHE PATH "Hint for finding boost root directory")
-set(BOOST_INCLUDEDIR "" CACHE PATH "Hint for finding boost include directory")
-set(BOOST_LIBRARYDIR "" CACHE PATH "Hint for finding boost library directory")
-find_package(Boost 1.62.0 REQUIRED filesystem)
+find_package(Boost REQUIRED filesystem)
 # =================================
 
 add_subdirectory(test)
@@ -37,19 +28,17 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     endif()
     message("${PROJECT_NAME} Build Type: ${CMAKE_BUILD_TYPE}")
 endif()
-
-# set input files
-include("${PROJECT_SOURCE_DIR}/files.cmake")
 # ==================================================================================================
 
 # === target =======================================================================================
+include("${PROJECT_SOURCE_DIR}/files.cmake")
 add_library(${PROJECT_NAME} INTERFACE)
 
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_final)
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
 
 target_include_directories(${PROJECT_NAME}
     INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -75,12 +64,12 @@ export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_BINARY_DIR}/${TARGET_EXPORT_NAME}.
 # === install ======================================================================================
 install(TARGETS ${PROJECT_NAME}
     EXPORT ${TARGET_EXPORT_NAME}
-    RUNTIME DESTINATION "bin"
-    LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/${PROJECT_NAME}" DESTINATION "include/")
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/${PROJECT_NAME}" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/")
 
 install(FILES ${PACKAGE_CONFIG_FILE} ${PACKAGE_VERSION_CONFIG_FILE} DESTINATION ${PACKAGE_CMAKE_INSTALL_DIR})
 install(EXPORT ${TARGET_EXPORT_NAME} DESTINATION "lib/${PROJECT_NAME}/cmake")

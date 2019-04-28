@@ -1,8 +1,9 @@
 # Author: Younguk Kim (bluekyu)
-# Date  : 2017-05-09
 
-cmake_minimum_required(VERSION 3.6)
-project(bluekyulib_test)
+cmake_minimum_required(VERSION 3.12)
+project(bluekyulib_test
+    LANGUAGES CXX
+)
 
 # === configure ====================================================================================
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
@@ -32,11 +33,20 @@ set(sources_files
 # === target =======================================================================================
 add_executable(${PROJECT_NAME} ${sources_files})
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /MP /wd4251)
+    target_compile_options(${PROJECT_NAME} PRIVATE /MP /wd4251 /wd4275 /utf-8 /permissive-
+        $<$<NOT:$<BOOL:${${PROJECT_NAME}_ENABLE_RTTI}>>:/GR->
+
+        # note: windows.cmake in vcpkg
+        $<$<CONFIG:Release>:/Oi /Gy /Z7>
+    )
+    set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO    " /INCREMENTAL:NO /OPT:REF /OPT:ICF ")
+    set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE           " /DEBUG /INCREMENTAL:NO /OPT:REF /OPT:ICF ")
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall
+        $<$<NOT:$<BOOL:${${PROJECT_NAME}_ENABLE_RTTI}>>:-fno-rtti>
+    )
 endif()
 
 target_include_directories(${PROJECT_NAME}
@@ -51,7 +61,8 @@ target_link_libraries(${PROJECT_NAME}
 
 # === install ======================================================================================
 install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION "bin"
-    LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib")
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
 # ==================================================================================================
